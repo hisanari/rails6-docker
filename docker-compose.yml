@@ -21,6 +21,7 @@ services:
       - packs:/app/public/packs
     depends_on:
       - db
+      - redis
   runner:
     <<: *backend
     command: /bin/bash
@@ -32,6 +33,9 @@ services:
     command: bundle exec rails server -b 0.0.0.0
     ports:
       - '3000:3000'
+  sidekiq:
+    <<: *backend
+    command: bundle exec sidekiq -C config/sidekiq.yml
   db:
     image: mysql:latest
     restart: always
@@ -44,6 +48,12 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: root
       MYSQL_PASSWORD: root
+  redis:
+    image: redis:latest
+    volumes:
+      - redis:/data
+    ports:
+      - 6370
   webpacker:
     <<: *app
     command: ./bin/webpack-dev-server
@@ -62,3 +72,4 @@ volumes:
   rails_cache:
   node_modules:
   packs:
+  redis:
