@@ -10,7 +10,10 @@ services:
     <<: *app
     stdin_open: true
     tty: true
-    environment: 
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - RAILS_ENV=${RAILS_ENV:-development}
+      - REDIS_URL=redis://redis:6379/
       - WEBPACKER_DEV_SERVER_HOST=webpacker
       - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
     volumes:
@@ -49,7 +52,7 @@ services:
       MYSQL_USER: root
       MYSQL_PASSWORD: root
   redis:
-    image: redis:latest
+    image: redis:latest 
     volumes:
       - redis:/data
     ports:
@@ -60,11 +63,13 @@ services:
     ports:
       - '3035:3035'
     volumes:
-      - .:/app:cached
+      - .:/myapp:cached
       - bundle:/usr/local/bundle
       - node_modules:/app/node_modules
       - packs:/app/public/packs
     environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - RAILS_ENV=${RAILS_ENV:-development}
       - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
 volumes:
   bundle:
